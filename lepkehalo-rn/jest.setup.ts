@@ -19,3 +19,19 @@ afterAll(() => server.close());
 jest.mock('react-native-vision-camera');
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('react-native-inappbrowser-reborn');
+jest.mock('expo-camera');
+jest.mock('expo-haptics', () => ({
+  notificationAsync: jest.fn(),
+  impactAsync: jest.fn(),
+  selectionAsync: jest.fn(),
+  NotificationFeedbackType: {
+    Success: 'success',
+    Warning: 'warning',
+    Error: 'error',
+  },
+  ImpactFeedbackStyle: {
+    Light: 'light',
+    Medium: 'medium',
+    Heavy: 'heavy',
+  },
+}));
