@@ -129,6 +129,10 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
           testID="close-button"
           style={styles.controlButton}
           onPress={handleClose}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Bezárás"
+          accessibilityHint="Visszatérés a könyvlistához"
         >
           <Text style={styles.controlIcon}>✕</Text>
         </TouchableOpacity>
@@ -137,6 +141,10 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
           testID="flash-toggle"
           style={styles.controlButton}
           onPress={toggleFlash}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel={flashEnabled ? 'Vaku kikapcsolása' : 'Vaku bekapcsolása'}
+          accessibilityState={{ checked: flashEnabled }}
         >
           {flashEnabled ? (
             <Text testID="flash-on-icon" style={styles.controlIcon}>⚡</Text>

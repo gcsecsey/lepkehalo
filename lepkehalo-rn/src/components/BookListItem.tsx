@@ -22,6 +22,10 @@ export function BookListItem({ book, onPress }: BookListItemProps) {
       style={styles.container}
       onPress={() => onPress(book)}
       activeOpacity={0.7}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={`${book.title}, ${book.author}`}
+      accessibilityHint="Koppints a könyv megnyitásához a Moly.hu-n"
     >
       {hasCover ? (
         <Image

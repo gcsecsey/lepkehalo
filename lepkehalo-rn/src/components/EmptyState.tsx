@@ -7,8 +7,14 @@ interface EmptyStateProps {
 
 export function EmptyState({ message = 'Nincsenek beolvasott könyvek' }: EmptyStateProps) {
   return (
-    <View testID="empty-state" style={styles.container}>
-      <Text style={styles.emoji}>📖</Text>
+    <View
+      testID="empty-state"
+      style={styles.container}
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={`${message}. Nyomj a beolvasás gombra egy könyv hozzáadásához`}
+    >
+      <Text style={styles.emoji} accessibilityElementsHidden={true}>📖</Text>
       <Text style={styles.message}>{message}</Text>
       <Text style={styles.hint}>
         Nyomj a beolvasás gombra egy könyv hozzáadásához

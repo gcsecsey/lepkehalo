@@ -102,6 +102,10 @@ export function HomeScreen() {
           style={styles.scanButton}
           onPress={handleScanPress}
           activeOpacity={0.8}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Beolvasás"
+          accessibilityHint="Vonalkód beolvasása új könyv hozzáadásához"
         >
           <Text style={styles.scanButtonText}>📷 Beolvasás</Text>
         </TouchableOpacity>
