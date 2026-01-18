@@ -18,6 +18,7 @@
     "test:e2e": "npm run test:e2e:ios && npm run test:e2e:android"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "expo": "~54.0.31",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
