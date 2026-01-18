@@ -18,12 +18,11 @@ import { EmptyState } from '@/components/EmptyState';
 import { SwipeableRow } from '@/components/SwipeableRow';
 import { Snackbar } from '@/components/Snackbar';
 import { getMolyBookUrl } from '@/services/molyApi';
+import { openInAppBrowser } from '@/services/browser';
 
-// We'll implement this later with react-native-inappbrowser-reborn
 const openBookUrl = async (bookId: string) => {
   const url = getMolyBookUrl(bookId);
-  console.log('Opening URL:', url);
-  // InAppBrowser.open(url) will be added in Phase 5
+  await openInAppBrowser(url);
 };
 
 interface DeletedBook {
