@@ -6,6 +6,34 @@ This document outlines the migration strategy for Lepkeháló from a native Andr
 
 ---
 
+## Development Approach: Test-Driven Development (TDD)
+
+We are following a **test-first approach** for this migration:
+
+1. **Write tests first** - Tests serve as the specification
+2. **Implement until green** - Build features to make tests pass
+3. **Refactor** - Clean up while keeping tests green
+
+### Testing Stack
+
+| Layer | Tool | Purpose |
+|-------|------|---------|
+| **Unit Tests** | Jest + React Native Testing Library | Components, services, stores |
+| **E2E Tests** | Detox | Full user flows on simulators/emulators |
+| **API Mocking** | MSW (Mock Service Worker) | Consistent API responses |
+| **CI/CD** | GitHub Actions | Automated tests on both platforms |
+
+### Benefits for This Migration
+
+- **No physical device required** - Tests run on simulators/emulators in CI
+- **Feature parity verification** - Tests define expected behavior from original app
+- **Regression prevention** - Catch issues before they reach production
+- **Documentation** - Tests describe how features should work
+
+See **[TESTING_STRATEGY.md](./TESTING_STRATEGY.md)** for detailed test specifications.
+
+---
+
 ## Current App Analysis
 
 ### Features
@@ -169,86 +197,125 @@ lepkehalo-rn/
 
 ---
 
-## Implementation Phases
+## Implementation Phases (TDD)
 
-### Phase 1: Project Setup & Core Infrastructure
+> **TDD Workflow**: Each phase follows Write Tests → Implement → Refactor
+
+### Phase 0: Test Infrastructure Setup
 
 **Tasks:**
 1. Initialize React Native project with TypeScript template
-2. Configure ESLint, Prettier, and TypeScript strict mode
-3. Set up navigation structure (React Navigation)
-4. Implement storage service (AsyncStorage)
-5. Create Book type definitions
-6. Set up Zustand store for book list state
-7. Configure app icons and splash screen
+2. Configure Jest with React Native Testing Library
+3. Set up MSW for API mocking
+4. Configure Detox for E2E testing (iOS Simulator + Android Emulator)
+5. Set up GitHub Actions CI pipeline for automated testing
+6. Create mock modules for camera/barcode scanner
 
 **Deliverables:**
-- Empty app shell with navigation between Home and Scanner screens
-- Working storage layer
-- State management foundation
+- Project skeleton with all test tooling configured
+- CI pipeline running tests on both platforms
+- Mock infrastructure for native modules
 
 ---
 
-### Phase 2: Home Screen & Book List
+### Phase 1: Storage & Data Layer (TDD)
 
-**Tasks:**
-1. Implement FlashList-based book list
-2. Create BookListItem component with cover image, title, author
-3. Implement swipe-to-delete with `react-native-gesture-handler`
-4. Add undo snackbar functionality
-5. Implement empty state view
-6. Style to match original design (or modernize)
+**Tests First:**
+- `__tests__/types/book.test.ts` - Book type validation
+- `__tests__/services/storage.test.ts` - Storage service tests
+- `__tests__/stores/bookStore.test.ts` - Zustand store tests
 
-**Native List Alternative (if needed):**
-- Create TurboModule wrapping RecyclerView (Android)
-- Create TurboModule wrapping UITableView (iOS)
+**Implementation:**
+1. Create Book type definitions
+2. Implement storage service (AsyncStorage)
+3. Set up Zustand store for book list state
+4. Implement add/remove/restore operations
 
 **Deliverables:**
-- Fully functional book list with swipe gestures
-- Persistent storage integration
+- All storage/store unit tests passing
+- Persistent state management working
+
+---
+
+### Phase 2: API Service (TDD)
+
+**Tests First:**
+- `__tests__/services/molyApi.test.ts` - API client tests with MSW mocks
+
+**Implementation:**
+1. Create Moly.hu API client with Axios
+2. Implement book lookup by ISBN
+3. Handle 404 (not found) and network errors
+4. Add loading state management
+
+**Deliverables:**
+- All API service tests passing
+- Robust error handling
+
+---
+
+### Phase 3: Home Screen & Book List (TDD)
+
+**Tests First:**
+- `__tests__/components/BookListItem.test.tsx` - List item rendering
+- `__tests__/screens/HomeScreen.test.tsx` - Screen logic
+- `e2e/bookListManagement.test.ts` - E2E list operations
+
+**Implementation:**
+1. Create BookListItem component
+2. Implement FlashList-based book list
+3. Add swipe-to-delete with react-native-gesture-handler
+4. Implement undo snackbar
+5. Create empty state view
+
+**Deliverables:**
+- All component unit tests passing
+- E2E tests for list management passing
 - Visual parity with original app
 
 ---
 
-### Phase 3: Barcode Scanner (Native Integration)
+### Phase 4: Barcode Scanner (TDD)
 
-**Tasks:**
-1. Install and configure `react-native-vision-camera`
-2. Implement camera permission handling (both platforms)
-3. Set up barcode detection frame processor
+**Tests First:**
+- `__tests__/screens/ScannerScreen.test.tsx` - Scanner logic (mocked camera)
+- `e2e/scanningFlow.test.ts` - E2E scanning flow
+
+**Implementation:**
+1. Install and configure react-native-vision-camera
+2. Create native mock module for E2E testing
+3. Implement camera permission handling
 4. Create scanner UI with overlay
 5. Implement flash toggle
-6. Handle barcode capture and return to home screen
-
-**Platform-Specific:**
-- **Android:** ML Kit barcode detector via frame processor
-- **iOS:** Vision framework barcode detector
+6. Handle barcode capture and navigation
 
 **Deliverables:**
-- Working barcode scanner on both platforms
-- Real-time barcode overlay visualization
-- Flash control
+- Scanner unit tests passing (with mocks)
+- E2E scanning flow tests passing
+- Working scanner on both platforms
 
 ---
 
-### Phase 4: Moly.hu API Integration
+### Phase 5: Integration & Navigation (TDD)
 
-**Tasks:**
-1. Create API client service
-2. Implement book lookup by ISBN
-3. Handle API errors gracefully
-4. Add loading states
-5. Implement Chrome Custom Tabs / Safari View for opening books
-6. Handle duplicate book detection
+**Tests First:**
+- `e2e/appLaunch.test.ts` - App launch flow
+- `e2e/duplicateHandling.test.ts` - Duplicate book handling
+- `e2e/platformSpecific.test.ts` - Platform-specific behaviors
+
+**Implementation:**
+1. Set up React Navigation stack
+2. Integrate scanner → API → list flow
+3. Implement Chrome Custom Tabs / Safari View
+4. Handle duplicate book detection (move to top)
 
 **Deliverables:**
-- Working API integration
-- Error handling with user-friendly messages
-- In-app browser for moly.hu links
+- All E2E tests passing
+- Full user flow working end-to-end
 
 ---
 
-### Phase 5: Polish & Platform Optimization
+### Phase 6: Polish & Platform Optimization
 
 **Tasks:**
 1. iOS-specific styling adjustments
