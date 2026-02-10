@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Barcode Test Page</title>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; background: #fff; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 8px; }
+  p.subtitle { text-align: center; color: #666; margin-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 960px; margin: 24px auto; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; text-align: center; }
+  .card h3 { margin: 0 0 4px; font-size: 15px; }
+  .card .author { color: #666; font-size: 13px; margin: 0 0 12px; }
+  .card svg { display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<h1>Book Barcode Test Page</h1>
+<p class="subtitle">Point your phone camera at these to test the scanner</p>
+<div class="grid" id="grid"></div>
+<script>
+const books = [
+  { isbn: "9780061120084", title: "To Kill a Mockingbird", author: "Harper Lee" },
+  { isbn: "9780241950432", title: "1984", author: "George Orwell" },
+  { isbn: "9781982146702", title: "The Great Gatsby", author: "F. Scott Fitzgerald" },
+  { isbn: "9780316769488", title: "The Catcher in the Rye", author: "J.D. Salinger" },
+  { isbn: "9780141439518", title: "Pride and Prejudice", author: "Jane Austen" },
+  { isbn: "9780140449136", title: "Crime and Punishment", author: "Fyodor Dostoevsky" },
+  { isbn: "9789631436167", title: "Száz év magány", author: "Gabriel García Márquez" },
+  { isbn: "9789634052623", title: "Egri csillagok", author: "Gárdonyi Géza" },
+  { isbn: "9789636030865", title: "A Pál utcai fiúk", author: "Molnár Ferenc" },
+  { isbn: "9789630799799", title: "Az arany ember", author: "Jókai Mór" },
+  { isbn: "9789634158493", title: "Abigél", author: "Szabó Magda" },
+  { isbn: "9789630799829", title: "Légy jó mindhalálig", author: "Móricz Zsigmond" },
+];
+
+const grid = document.getElementById("grid");
+books.forEach(book => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<h3>${book.title}</h3><p class="author">${book.author}</p><svg id="bc-${book.isbn}"></svg>`;
+  grid.appendChild(card);
+  JsBarcode(`#bc-${book.isbn}`, book.isbn, { format: "EAN13", width: 2, height: 80, fontSize: 14 });
+});
+</script>
+</body>
+</html>

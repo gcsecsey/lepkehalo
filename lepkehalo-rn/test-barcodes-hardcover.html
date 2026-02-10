@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Barcode Test Page (Hardcover)</title>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; background: #fff; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 8px; }
+  p.subtitle { text-align: center; color: #666; margin-top: 0; }
+  .setup { max-width: 480px; margin: 24px auto; text-align: center; }
+  .setup input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; margin-bottom: 12px; }
+  .setup button { padding: 10px 24px; background: #007AFF; color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .setup button:hover { background: #0066DD; }
+  .setup button:disabled { background: #999; cursor: not-allowed; }
+  .setup .hint { font-size: 12px; color: #999; margin-bottom: 12px; }
+  .status { text-align: center; color: #666; margin: 32px 0; font-size: 15px; }
+  .status.error { color: #c33; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 960px; margin: 24px auto; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; text-align: center; }
+  .card h3 { margin: 0 0 4px; font-size: 15px; }
+  .card .author { color: #666; font-size: 13px; margin: 0 0 12px; }
+  .card svg { display: block; margin: 0 auto; }
+  .section-label { max-width: 960px; margin: 32px auto 8px; font-size: 13px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<h1>Book Barcode Test Page</h1>
+<p class="subtitle">Dynamically loaded from Hardcover</p>
+
+<div class="setup" id="setup">
+  <input type="text" id="apiKey" placeholder="Hardcover API key"
+    value="">
+  <div class="hint">Get your key at <a href="https://hardcover.app/account/api" target="_blank">hardcover.app/account/api</a></div>
+  <button id="loadBtn" onclick="loadBooks()">Load Books</button>
+</div>
+
+<div id="status" class="status" style="display:none"></div>
+<div id="english-label" class="section-label" style="display:none">English</div>
+<div class="grid" id="english-grid"></div>
+<div id="hungarian-label" class="section-label" style="display:none">Magyar</div>
+<div class="grid" id="hungarian-grid"></div>
+
+<script>
+const API = 'https://api.hardcover.app/v1/graphql';
+
+const hungarianSearches = [
+  'Egri csillagok',
+  'A Pál utcai fiúk',
+  'Abigél',
+  'Az arany ember',
+  'Édes Anna',
+  'A kőszívű ember fiai',
+  'Tüskevár',
+  'Légy jó mindhalálig',
+];
+
+function setStatus(msg, isError) {
+  const el = document.getElementById('status');
+  el.style.display = 'block';
+  el.className = 'status' + (isError ? ' error' : '');
+  el.textContent = msg;
+}
+
+async function gql(query, variables, token) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+    body: JSON.stringify({ query, variables }),
+  });
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const json = await res.json();
+  if (json.errors) throw new Error(json.errors[0].message);
+  return json.data;
+}
+
+function renderBooks(books, gridId) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  books.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const id = 'bc-' + book.isbn;
+    card.innerHTML = `<h3>${book.title}</h3><p class="author">${book.author}</p><svg id="${id}"></svg>`;
+    grid.appendChild(card);
+    try {
+      JsBarcode(`#${id}`, book.isbn, { format: 'EAN13', width: 2, height: 80, fontSize: 14 });
+    } catch (e) {
+      card.querySelector('svg').outerHTML = `<p style="color:#c33;font-size:12px">Invalid EAN-13: ${book.isbn}</p>`;
+    }
+  });
+}
+
+function extractAuthor(book) {
+  if (book.contributions && book.contributions.length > 0) {
+    return book.contributions[0].author.name;
+  }
+  if (book.cached_contributors) {
+    try {
+      const c = typeof book.cached_contributors === 'string'
+        ? JSON.parse(book.cached_contributors) : book.cached_contributors;
+      if (Array.isArray(c) && c.length > 0) return c[0].name || c[0].author || c[0];
+      if (c.author) return Array.isArray(c.author) ? c.author[0] : c.author;
+    } catch {}
+  }
+  return 'Unknown';
+}
+
+function extractIsbn(book) {
+  // Try isbn_13 directly on book
+  if (book.isbn_13) return book.isbn_13;
+  if (book.isbn_10) return book.isbn_10;
+  // Try editions
+  if (book.editions && book.editions.length > 0) {
+    for (const ed of book.editions) {
+      if (ed.isbn_13) return ed.isbn_13;
+      if (ed.isbn_10) return ed.isbn_10;
+    }
+  }
+  return null;
+}
+
+async function loadEnglishBooks(token) {
+  const query = `{
+    books(
+      order_by: {users_read_count: desc}
+      limit: 20
+    ) {
+      title
+      isbn_13
+      isbn_10
+      cached_contributors
+      contributions { author { name } }
+      editions(limit: 3, order_by: {users_count: desc}) {
+        isbn_13
+        isbn_10
+      }
+    }
+  }`;
+  const data = await gql(query, {}, token);
+  return data.books
+    .map(b => ({ title: b.title, author: extractAuthor(b), isbn: extractIsbn(b) }))
+    .filter(b => b.isbn && /^\d{13}$/.test(b.isbn))
+    .slice(0, 6);
+}
+
+async function searchHungarianBook(title, token) {
+  const query = `query($q: String!) {
+    search(query: $q, query_type: "books", per_page: 3, page: 1) {
+      results
+    }
+  }`;
+  const data = await gql(query, { q: title }, token);
+  const results = data.search?.results;
+  if (!results) return null;
+
+  // search results come as a nested structure; try to extract hits
+  let hits = [];
+  if (Array.isArray(results)) hits = results;
+  else if (results.hits) hits = results.hits;
+  else if (results.results) hits = results.results;
+  else if (typeof results === 'object') {
+    // Try to find an array somewhere in the structure
+    for (const key of Object.keys(results)) {
+      if (Array.isArray(results[key])) { hits = results[key]; break; }
+      if (results[key]?.hits) { hits = results[key].hits; break; }
+    }
+  }
+
+  for (const hit of hits) {
+    const doc = hit.document || hit._source || hit;
+    const isbn = doc.isbn_13 || doc.isbn_10 ||
+      (doc.editions && doc.editions[0]?.isbn_13) ||
+      (doc.isbns && doc.isbns[0]);
+    if (isbn && /^\d{13}$/.test(isbn)) {
+      const author = doc.author_names?.[0] || doc.cached_contributors?.[0]?.name || doc.author || 'Unknown';
+      return { title: doc.title || title, author, isbn };
+    }
+  }
+
+  // Fallback: if search gave us a book ID, query it directly
+  if (hits[0]) {
+    const id = hits[0].document?.id || hits[0].id;
+    if (id) {
+      const bookQuery = `{
+        books(where: {id: {_eq: ${id}}}) {
+          title
+          isbn_13
+          isbn_10
+          cached_contributors
+          contributions { author { name } }
+          editions(limit: 3, order_by: {users_count: desc}) { isbn_13 isbn_10 }
+        }
+      }`;
+      const bookData = await gql(bookQuery, {}, token);
+      if (bookData.books?.[0]) {
+        const b = bookData.books[0];
+        const isbn = extractIsbn(b);
+        if (isbn && /^\d{13}$/.test(isbn)) {
+          return { title: b.title, author: extractAuthor(b), isbn };
+        }
+      }
+    }
+  }
+  return null;
+}
+
+async function loadBooks() {
+  const token = document.getElementById('apiKey').value.trim();
+  if (!token) { setStatus('Please enter your Hardcover API key.', true); return; }
+
+  const btn = document.getElementById('loadBtn');
+  btn.disabled = true;
+  setStatus('Loading books from Hardcover...');
+
+  try {
+    // Load English and Hungarian books in parallel
+    const [english, hungarianResults] = await Promise.all([
+      loadEnglishBooks(token),
+      Promise.all(
+        hungarianSearches.map(async (title) => {
+          // Space out requests slightly to avoid rate limiting
+          await new Promise(r => setTimeout(r, Math.random() * 500));
+          try { return await searchHungarianBook(title, token); }
+          catch { return null; }
+        })
+      ),
+    ]);
+
+    const hungarian = hungarianResults.filter(Boolean).slice(0, 6);
+
+    if (english.length === 0 && hungarian.length === 0) {
+      setStatus('No books with valid ISBN-13 found. The API key may be invalid.', true);
+      btn.disabled = false;
+      return;
+    }
+
+    document.getElementById('status').style.display = 'none';
+    document.getElementById('setup').style.display = 'none';
+
+    if (english.length > 0) {
+      document.getElementById('english-label').style.display = 'block';
+      renderBooks(english, 'english-grid');
+    }
+    if (hungarian.length > 0) {
+      document.getElementById('hungarian-label').style.display = 'block';
+      renderBooks(hungarian, 'hungarian-grid');
+    }
+
+    if (english.length + hungarian.length < 12) {
+      setStatus(`Loaded ${english.length + hungarian.length} books (some had no ISBN-13).`);
+    }
+  } catch (err) {
+    setStatus(`Error: ${err.message}`, true);
+  }
+  btn.disabled = false;
+}
+
+// Auto-load if key is already filled (e.g. from localStorage)
+const saved = localStorage.getItem('hardcover_api_key');
+if (saved) { document.getElementById('apiKey').value = saved; }
+// Save key on load
+document.getElementById('loadBtn').addEventListener('click', () => {
+  const k = document.getElementById('apiKey').value.trim();
+  if (k) localStorage.setItem('hardcover_api_key', k);
+});
+</script>
+</body>
+</html>
