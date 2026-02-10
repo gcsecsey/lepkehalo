@@ -18,7 +18,10 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "A vonalkód beolvasásához szükség van a kamerára.",
-        "CFBundleLocalizations": ["hu", "en"],
+        "CFBundleLocalizations": [
+          "hu",
+          "en"
+        ],
         "CFBundleDevelopmentRegion": "hu"
       }
     },
@@ -40,7 +43,8 @@
         {
           "cameraPermission": "A vonalkód beolvasásához szükség van a kamerára."
         }
-      ]
+      ],
+      "expo-web-browser"
     ]
   }
 }
