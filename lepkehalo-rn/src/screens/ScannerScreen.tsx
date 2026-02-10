@@ -54,7 +54,7 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
     if (permission && !permission.granted && permission.canAskAgain) {
       requestPermission();
     }
-  }, []);
+  }, [permission, requestPermission]);
 
   // Permission not determined yet
   if (!permission) {

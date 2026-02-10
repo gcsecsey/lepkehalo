@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
@@ -14,9 +14,13 @@ export function ScannerScreenWrapper() {
   const { addBook, hasBook, moveToTop } = useBookStore();
   const [scanState, setScanState] = useState<ScanState>('scanning');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const isProcessingRef = useRef(false);
 
   const handleBarcodeScanned = useCallback(
     async (isbn: string) => {
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
+
       // Check if book already exists
       if (hasBook(isbn)) {
         // Move existing book to top
@@ -50,6 +54,7 @@ export function ScannerScreenWrapper() {
           setTimeout(() => {
             setScanState('scanning');
             setErrorMessage(null);
+            isProcessingRef.current = false;
           }, 2000);
         }
       } catch (error) {
