@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   Text,
   ActivityIndicator,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
 import { useBookStore } from '@/stores/bookStore';
@@ -84,41 +84,39 @@ export function HomeScreen() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <View testID="home-screen" style={styles.container}>
-        {books.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <FlashList
-            data={books}
-            renderItem={renderItem}
-            estimatedItemSize={99}
-            keyExtractor={(item) => item.id}
-          />
-        )}
-
-        <TouchableOpacity
-          testID="scan-button"
-          style={styles.scanButton}
-          onPress={handleScanPress}
-          activeOpacity={0.8}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="Beolvasás"
-          accessibilityHint="Vonalkód beolvasása új könyv hozzáadásához"
-        >
-          <Text style={styles.scanButtonText}>📷 Beolvasás</Text>
-        </TouchableOpacity>
-
-        <Snackbar
-          message="Könyv törölve"
-          actionLabel="Visszavonás"
-          onAction={handleUndo}
-          onDismiss={handleSnackbarDismiss}
-          visible={snackbarVisible}
+    <SafeAreaView testID="home-screen" style={styles.container} edges={['top']}>
+      <Text style={styles.heading}>Beolvasott könyvek</Text>
+      {books.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <FlatList
+          data={books}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
         />
-      </View>
-    </GestureHandlerRootView>
+      )}
+
+      <TouchableOpacity
+        testID="scan-button"
+        style={styles.scanButton}
+        onPress={handleScanPress}
+        activeOpacity={0.8}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Beolvasás"
+        accessibilityHint="Vonalkód beolvasása új könyv hozzáadásához"
+      >
+        <Text style={styles.scanButtonText}>📷 Beolvasás</Text>
+      </TouchableOpacity>
+
+      <Snackbar
+        message="Könyv törölve"
+        actionLabel="Visszavonás"
+        onAction={handleUndo}
+        onDismiss={handleSnackbarDismiss}
+        visible={snackbarVisible}
+      />
+    </SafeAreaView>
   );
 }
 
@@ -126,6 +124,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  heading: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
   },
   loadingContainer: {
     flex: 1,
