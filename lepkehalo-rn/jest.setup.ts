@@ -19,7 +19,7 @@ afterAll(() => server.close());
 jest.mock('react-native-vision-camera');
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('react-native-inappbrowser-reborn');
-jest.mock('expo-camera');
+// native-barcode-scanner is mocked via moduleNameMapper in jest.config.js
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
   impactAsync: jest.fn(),
