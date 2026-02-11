@@ -7,6 +7,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '.*/modules/native-barcode-scanner': '<rootDir>/__mocks__/native-barcode-scanner',
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

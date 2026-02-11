@@ -1,63 +1,45 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';
+
+import {
+  NativeBarcodeScannerView,
+  NativeBarcodeScannerModule,
+} from '../../modules/native-barcode-scanner';
 
 interface ScannerScreenProps {
   onBarcodeScanned: (isbn: string) => void;
 }
 
-const { width, height } = Dimensions.get('window');
-const SCAN_AREA_SIZE = width * 0.7;
-
 export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
   const navigation = useNavigation();
-  const [permission, requestPermission] = useCameraPermissions();
-  const [flashEnabled, setFlashEnabled] = useState(false);
-  const [scanned, setScanned] = useState(false);
-  const lastScannedRef = useRef<string | null>(null);
+  const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
+
+  // Request camera permission on mount
+  useEffect(() => {
+    NativeBarcodeScannerModule.requestCameraPermissionAsync().then((result) => {
+      setPermissionGranted(result.granted);
+    });
+  }, []);
 
   const handleBarcodeScanned = useCallback(
-    ({ data }: { type: string; data: string }) => {
-      // Prevent duplicate scans
-      if (scanned || data === lastScannedRef.current) {
-        return;
-      }
-
-      lastScannedRef.current = data;
-      setScanned(true);
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      onBarcodeScanned(data);
+    (event: { nativeEvent: { data: string; type: string } }) => {
+      onBarcodeScanned(event.nativeEvent.data);
     },
-    [scanned, onBarcodeScanned]
+    [onBarcodeScanned]
   );
 
   const handleClose = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  const toggleFlash = useCallback(() => {
-    setFlashEnabled((prev) => !prev);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, []);
-
-  // Request permission on first render
-  React.useEffect(() => {
-    if (permission && !permission.granted && permission.canAskAgain) {
-      requestPermission();
-    }
-  }, [permission, requestPermission]);
-
   // Permission not determined yet
-  if (!permission) {
+  if (permissionGranted === null) {
     return (
       <View testID="scanner-screen" style={styles.container}>
         <Text style={styles.message}>Kamera inicializálása...</Text>
@@ -66,7 +48,7 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
   }
 
   // Permission denied
-  if (!permission.granted) {
+  if (!permissionGranted) {
     return (
       <View testID="scanner-screen" style={styles.container}>
         <Text style={styles.message}>Kamera engedély szükséges</Text>
@@ -84,75 +66,18 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
     );
   }
 
+  // Render native scanner view.
+  // Camera preview, barcode detection, scan overlay, corner markers,
+  // flash toggle, and close button are all rendered natively
+  // (SwiftUI on iOS, Jetpack Compose on Android).
   return (
     <View testID="scanner-screen" style={styles.container}>
-      <CameraView
-        testID="camera-view"
+      <NativeBarcodeScannerView
         style={StyleSheet.absoluteFillObject}
-        facing="back"
-        enableTorch={flashEnabled}
-        barcodeScannerSettings={{
-          barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'],
-        }}
+        isActive={true}
         onBarcodeScanned={handleBarcodeScanned}
+        onClose={handleClose}
       />
-
-      {/* Overlay */}
-      <View testID="scanner-overlay" style={styles.overlay}>
-        {/* Top dark area */}
-        <View style={styles.darkArea} />
-
-        {/* Middle row with scan area */}
-        <View style={styles.middleRow}>
-          <View style={styles.darkArea} />
-          <View style={styles.scanArea}>
-            {/* Corner markers */}
-            <View style={[styles.corner, styles.topLeft]} />
-            <View style={[styles.corner, styles.topRight]} />
-            <View style={[styles.corner, styles.bottomLeft]} />
-            <View style={[styles.corner, styles.bottomRight]} />
-          </View>
-          <View style={styles.darkArea} />
-        </View>
-
-        {/* Bottom dark area with instructions */}
-        <View style={[styles.darkArea, styles.bottomArea]}>
-          <Text style={styles.instruction}>
-            Helyezze a vonalkódot a keretbe
-          </Text>
-        </View>
-      </View>
-
-      {/* Controls */}
-      <View style={styles.controls}>
-        <TouchableOpacity
-          testID="close-button"
-          style={styles.controlButton}
-          onPress={handleClose}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="Bezárás"
-          accessibilityHint="Visszatérés a könyvlistához"
-        >
-          <Text style={styles.controlIcon}>✕</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          testID="flash-toggle"
-          style={styles.controlButton}
-          onPress={toggleFlash}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel={flashEnabled ? 'Vaku kikapcsolása' : 'Vaku bekapcsolása'}
-          accessibilityState={{ checked: flashEnabled }}
-        >
-          {flashEnabled ? (
-            <Text testID="flash-on-icon" style={styles.controlIcon}>⚡</Text>
-          ) : (
-            <Text testID="flash-off-icon" style={styles.controlIcon}>🔦</Text>
-          )}
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -176,83 +101,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
     paddingHorizontal: 32,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  darkArea: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  },
-  middleRow: {
-    flexDirection: 'row',
-    height: SCAN_AREA_SIZE,
-  },
-  scanArea: {
-    width: SCAN_AREA_SIZE,
-    height: SCAN_AREA_SIZE,
-    position: 'relative',
-  },
-  bottomArea: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: 24,
-  },
-  instruction: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  corner: {
-    position: 'absolute',
-    width: 20,
-    height: 20,
-    borderColor: '#fff',
-  },
-  topLeft: {
-    top: 0,
-    left: 0,
-    borderTopWidth: 3,
-    borderLeftWidth: 3,
-  },
-  topRight: {
-    top: 0,
-    right: 0,
-    borderTopWidth: 3,
-    borderRightWidth: 3,
-  },
-  bottomLeft: {
-    bottom: 0,
-    left: 0,
-    borderBottomWidth: 3,
-    borderLeftWidth: 3,
-  },
-  bottomRight: {
-    bottom: 0,
-    right: 0,
-    borderBottomWidth: 3,
-    borderRightWidth: 3,
-  },
-  controls: {
-    position: 'absolute',
-    top: 60,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  controlButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  controlIcon: {
-    fontSize: 20,
-    color: '#fff',
   },
   closeButton: {
     marginTop: 24,
