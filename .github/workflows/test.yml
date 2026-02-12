@@ -33,7 +33,7 @@ jobs:
 
   e2e-ios:
     name: E2E Tests (iOS)
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -51,10 +51,6 @@ jobs:
 
       - name: Generate native projects
         run: npx expo prebuild --clean
-
-      - name: Install CocoaPods
-        working-directory: ios
-        run: pod install
 
       - name: Build for Detox
         run: npm run build:e2e:ios

@@ -44,7 +44,19 @@
           "cameraPermission": "A vonalkód beolvasásához szükség van a kamerára."
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libfbjni.so"
+              ]
+            }
+          }
+        }
+      ]
     ]
   }
 }
