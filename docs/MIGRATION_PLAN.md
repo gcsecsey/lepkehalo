@@ -161,7 +161,6 @@ import { FlashList } from "@shopify/flash-list";
 ## Project Structure
 
 ```
-lepkehalo-rn/
 ├── src/
 │   ├── app/                    # App entry, providers
 │   │   ├── App.tsx
