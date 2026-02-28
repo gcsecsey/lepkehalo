@@ -1,7 +1,10 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { ScannerScreen } from '@/screens/ScannerScreen';
-import { setMockPermissionStatus, useCameraPermissions } from '../../__mocks__/expo-camera';
+import {
+  setMockPermissionGranted,
+  NativeBarcodeScannerModule,
+} from '../../__mocks__/native-barcode-scanner';
 
 // Mock navigation
 jest.mock('@react-navigation/native', () => ({
@@ -12,43 +15,37 @@ jest.mock('@react-navigation/native', () => ({
 
 describe('ScannerScreen permission request', () => {
   beforeEach(() => {
-    (useCameraPermissions as jest.Mock).mockClear();
+    (NativeBarcodeScannerModule.requestCameraPermissionAsync as jest.Mock).mockClear();
   });
 
-  it('should call requestPermission when status is undetermined', async () => {
-    setMockPermissionStatus('undetermined');
+  it('should call requestCameraPermissionAsync on mount', async () => {
+    setMockPermissionGranted(true);
 
     render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
 
     await waitFor(() => {
-      // Get the requestPermission function from the last call to useCameraPermissions
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
-      const [, requestPermission] = lastCall[lastCall.length - 1].value;
-      expect(requestPermission).toHaveBeenCalled();
+      expect(NativeBarcodeScannerModule.requestCameraPermissionAsync).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('should not request permission when already granted', async () => {
-    setMockPermissionStatus('granted');
+  it('should show native scanner view when permission granted', async () => {
+    setMockPermissionGranted(true);
 
-    render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
 
     await waitFor(() => {
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
-      const [, requestPermission] = lastCall[lastCall.length - 1].value;
-      expect(requestPermission).not.toHaveBeenCalled();
+      expect(getByTestId('native-scanner-view')).toBeTruthy();
     });
   });
 
-  it('should not request permission when permanently denied', async () => {
-    setMockPermissionStatus('denied');
+  it('should show permission denied UI when not granted', async () => {
+    setMockPermissionGranted(false);
 
-    render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByText, getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
 
     await waitFor(() => {
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
-      const [, requestPermission] = lastCall[lastCall.length - 1].value;
-      expect(requestPermission).not.toHaveBeenCalled();
+      expect(getByText(/kamera engedély/i)).toBeTruthy();
+      expect(getByTestId('close-button')).toBeTruthy();
     });
   });
 });

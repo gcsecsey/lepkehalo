@@ -2,7 +2,7 @@ import React from 'react';
 import { render, waitFor, act } from '@testing-library/react-native';
 import { http, HttpResponse } from 'msw';
 import { ScannerScreenWrapper } from '@/screens/ScannerScreenWrapper';
-import { setMockPermissionStatus, mockScanBarcode } from '../../__mocks__/expo-camera';
+import { setMockPermissionGranted, mockScanBarcode } from '../../__mocks__/native-barcode-scanner';
 import { server } from '../../__mocks__/server';
 import { useBookStore } from '@/stores/bookStore';
 
@@ -14,8 +14,11 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-// Helper to scan a barcode in the rendered wrapper
+// Helper to scan a barcode in the rendered wrapper.
+// First flushes microtasks so the native view's permission promise resolves
+// and event callbacks are registered, then fires the barcode event.
 const scanBarcode = async (isbn: string) => {
+  await act(async () => {}); // flush permission promise
   await act(async () => {
     mockScanBarcode('ean13', isbn);
   });
@@ -23,8 +26,8 @@ const scanBarcode = async (isbn: string) => {
 
 describe('ScannerScreenWrapper', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    setMockPermissionStatus('granted');
+    jest.useFakeTimers({ doNotFake: ['queueMicrotask', 'nextTick'] });
+    setMockPermissionGranted(true);
     mockGoBack.mockClear();
     // Reset store state
     useBookStore.setState({ books: [], isLoading: false });

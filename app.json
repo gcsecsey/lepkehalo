@@ -39,12 +39,6 @@
       ]
     },
     "plugins": [
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "A vonalkód beolvasásához szükség van a kamerára."
-        }
-      ],
       "expo-web-browser",
       [
         "expo-build-properties",
