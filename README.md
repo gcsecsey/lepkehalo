@@ -215,7 +215,7 @@ npx expo prebuild
 cd android && ./gradlew assembleRelease
 
 # iOS (requires Xcode)
-cd ios && xcodebuild -workspace Lepkehl.xcworkspace -scheme Lepkehl -configuration Release
+cd ios && xcodebuild -workspace Lepkehalo.xcworkspace -scheme Lepkehalo -configuration Release
 ```
 
 ## Troubleshooting

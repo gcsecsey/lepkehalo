@@ -13,16 +13,16 @@ module.exports = {
     'ios.debug': {
       type: 'ios.app',
       binaryPath:
-        'ios/build/Build/Products/Debug-iphonesimulator/Lepkehl.app',
+        'ios/build/Build/Products/Debug-iphonesimulator/Lepkehalo.app',
       build:
-        'xcodebuild -workspace ios/Lepkehl.xcworkspace -scheme Lepkehl -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
+        'xcodebuild -workspace ios/Lepkehalo.xcworkspace -scheme Lepkehalo -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build',
     },
     'ios.release': {
       type: 'ios.app',
       binaryPath:
-        'ios/build/Build/Products/Release-iphonesimulator/Lepkehl.app',
+        'ios/build/Build/Products/Release-iphonesimulator/Lepkehalo.app',
       build:
-        'xcodebuild -workspace ios/Lepkehl.xcworkspace -scheme Lepkehl -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
+        'xcodebuild -workspace ios/Lepkehalo.xcworkspace -scheme Lepkehalo -configuration Release -sdk iphonesimulator -derivedDataPath ios/build',
     },
     'android.debug': {
       type: 'android.apk',

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Lepkeháló",
+    "name": "Lepkehalo",
     "slug": "lepkehalo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,6 +17,7 @@
       "bundleIdentifier": "hu.lepkehalo.app",
       "buildNumber": "1",
       "infoPlist": {
+        "CFBundleDisplayName": "Lepkeháló",
         "NSCameraUsageDescription": "A vonalkód beolvasásához szükség van a kamerára.",
         "CFBundleLocalizations": [
           "hu",
