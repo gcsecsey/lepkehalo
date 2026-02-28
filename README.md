@@ -57,15 +57,21 @@ This routes traffic through Expo's servers (requires free Expo account).
 ### iOS Simulator (macOS only)
 
 ```bash
-# Requires Xcode to be installed
-npx expo start --ios
+# Generate native project (required once)
+npx expo prebuild --platform ios
+
+# Build and run on simulator
+npx expo run:ios
 ```
 
 ### Android Emulator
 
 ```bash
-# Requires Android Studio and an AVD configured
-npx expo start --android
+# Generate native project (required once)
+npx expo prebuild --platform android
+
+# Build and run on emulator
+npx expo run:android
 ```
 
 ## Testing
@@ -209,7 +215,7 @@ npx expo prebuild
 cd android && ./gradlew assembleRelease
 
 # iOS (requires Xcode)
-cd ios && xcodebuild -workspace Lepkehalo.xcworkspace -scheme Lepkehalo -configuration Release
+cd ios && xcodebuild -workspace Lepkehl.xcworkspace -scheme Lepkehl -configuration Release
 ```
 
 ## Troubleshooting
@@ -240,7 +246,6 @@ npm test -- --maxWorkers=2
 
 ## Documentation
 
-- [Migration Plan](./docs/MIGRATION_PLAN.md) - Architecture and implementation details
 - [Testing Strategy](./docs/TESTING_STRATEGY.md) - TDD approach and test specifications
 
 ## License
