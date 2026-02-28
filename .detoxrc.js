@@ -35,7 +35,7 @@ module.exports = {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
-        'cd android && ./gradlew assembleRelease :app:assembleReleaseAndroidTest -DtestBuildType=release',
+        'cd android && ./gradlew assembleRelease :app:assembleDebugAndroidTest -DtestBuildType=debug',
     },
   },
   devices: {
