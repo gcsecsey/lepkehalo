@@ -9,4 +9,13 @@ module.exports = {
   reporters: ['detox/runners/jest/reporter'],
   testEnvironment: 'detox/runners/jest/testEnvironment',
   verbose: true,
+  transform: {
+    '\\.tsx?$': [
+      'babel-jest',
+      {
+        presets: ['@babel/preset-typescript'],
+        plugins: ['@babel/plugin-transform-modules-commonjs'],
+      },
+    ],
+  },
 };
