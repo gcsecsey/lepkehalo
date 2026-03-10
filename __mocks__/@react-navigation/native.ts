@@ -1,24 +1,24 @@
 // Mock for @react-navigation/native
 
-const mockNavigate = jest.fn();
-const mockGoBack = jest.fn();
-const mockReset = jest.fn();
+const mockNavigate = vi.fn();
+const mockGoBack = vi.fn();
+const mockReset = vi.fn();
 
-export const useNavigation = jest.fn(() => ({
+export const useNavigation = vi.fn(() => ({
   navigate: mockNavigate,
   goBack: mockGoBack,
   reset: mockReset,
 }));
 
-export const useRoute = jest.fn(() => ({
+export const useRoute = vi.fn(() => ({
   params: {},
 }));
 
-export const useFocusEffect = jest.fn((callback) => {
+export const useFocusEffect = vi.fn((callback) => {
   callback();
 });
 
-export const useIsFocused = jest.fn(() => true);
+export const useIsFocused = vi.fn(() => true);
 
 export const NavigationContainer = ({ children }: { children: React.ReactNode }) => children;
 

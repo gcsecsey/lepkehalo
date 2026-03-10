@@ -4,8 +4,8 @@ import { ScannerScreen } from '@/screens/ScannerScreen';
 import { setMockPermissionStatus, mockScanBarcode } from '../../__mocks__/expo-camera';
 
 // Mock navigation
-const mockGoBack = jest.fn();
-jest.mock('@react-navigation/native', () => ({
+const mockGoBack = vi.fn();
+vi.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     goBack: mockGoBack,
   }),
@@ -18,7 +18,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should render camera when permission is granted', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByTestId('scanner-screen')).toBeTruthy();
@@ -29,7 +29,7 @@ describe('ScannerScreen', () => {
   it('should show permission denied message when camera not granted', async () => {
     setMockPermissionStatus('denied');
 
-    const { getByText } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByText } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByText(/kamera engedély/i)).toBeTruthy();
@@ -37,7 +37,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should have flash toggle button', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByTestId('flash-toggle')).toBeTruthy();
@@ -45,7 +45,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should toggle flash state when flash button pressed', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       const flashButton = getByTestId('flash-toggle');
@@ -64,7 +64,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should have close button', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByTestId('close-button')).toBeTruthy();
@@ -72,7 +72,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should call goBack when close button pressed', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByTestId('close-button')).toBeTruthy();
@@ -84,7 +84,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should call onBarcodeScanned when barcode detected', async () => {
-    const onBarcodeScanned = jest.fn();
+    const onBarcodeScanned = vi.fn();
     render(<ScannerScreen onBarcodeScanned={onBarcodeScanned} />);
 
     await waitFor(() => {
@@ -98,7 +98,7 @@ describe('ScannerScreen', () => {
   });
 
   it('should show scanner overlay', async () => {
-    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    const { getByTestId } = render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       expect(getByTestId('scanner-overlay')).toBeTruthy();

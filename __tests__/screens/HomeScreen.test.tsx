@@ -11,13 +11,10 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 // Mock GestureHandlerRootView
-jest.mock('react-native-gesture-handler', () => {
-  const View = require('react-native').View;
-  return {
-    GestureHandlerRootView: View,
-    Swipeable: View,
-  };
-});
+vi.mock('react-native-gesture-handler', () => ({
+  GestureHandlerRootView: ({ children }: { children: React.ReactNode }) => children,
+  Swipeable: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 const mockNavigate = __mockNavigate;
 
@@ -25,7 +22,7 @@ const mockNavigate = __mockNavigate;
 const originalLoadBooks = useBookStore.getState().loadBooks;
 beforeAll(() => {
   useBookStore.setState({
-    loadBooks: jest.fn().mockImplementation(async () => {
+    loadBooks: vi.fn().mockImplementation(async () => {
       // Don't actually load books in tests - use what's already in state
       useBookStore.setState({ isLoading: false });
     }),
@@ -109,7 +106,7 @@ describe('HomeScreen', () => {
     useBookStore.setState({
       books: [],
       isLoading: true,
-      loadBooks: jest.fn().mockImplementation(async () => {
+      loadBooks: vi.fn().mockImplementation(async () => {
         // Keep loading state for this test
       }),
     });

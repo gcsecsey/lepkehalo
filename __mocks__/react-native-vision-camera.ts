@@ -12,18 +12,18 @@ export const Camera = React.forwardRef<View, ViewProps & { device?: any; isActiv
 );
 
 // Mock camera permission functions
-export const requestCameraPermission = jest.fn().mockResolvedValue('granted');
-export const getCameraPermissionStatus = jest.fn().mockReturnValue('granted');
+export const requestCameraPermission = vi.fn().mockResolvedValue('granted');
+export const getCameraPermissionStatus = vi.fn().mockReturnValue('granted');
 
 // Mock camera device hooks
-export const useCameraDevice = jest.fn().mockReturnValue({
+export const useCameraDevice = vi.fn().mockReturnValue({
   id: 'back-camera',
   position: 'back',
   hasFlash: true,
   hasTorch: true,
 });
 
-export const useCameraDevices = jest.fn().mockReturnValue({
+export const useCameraDevices = vi.fn().mockReturnValue({
   back: {
     id: 'back-camera',
     position: 'back',
@@ -55,7 +55,7 @@ interface CodeScannerOptions {
 let _onCodeScannedCallback: ((codes: Code[]) => void) | null = null;
 
 // Mock code scanner hook
-export const useCodeScanner = jest.fn((options: CodeScannerOptions) => {
+export const useCodeScanner = vi.fn((options: CodeScannerOptions) => {
   _onCodeScannedCallback = options.onCodeScanned;
   return {
     props: {},

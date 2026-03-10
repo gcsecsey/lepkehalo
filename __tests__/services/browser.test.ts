@@ -1,8 +1,8 @@
 import { openInAppBrowser } from '@/services/browser';
 import * as WebBrowser from 'expo-web-browser';
 
-jest.mock('expo-web-browser', () => ({
-  openBrowserAsync: jest.fn(),
+vi.mock('expo-web-browser', () => ({
+  openBrowserAsync: vi.fn(),
   WebBrowserPresentationStyle: {
     FULL_SCREEN: 'fullScreen',
   },
@@ -10,7 +10,7 @@ jest.mock('expo-web-browser', () => ({
 
 describe('openInAppBrowser', () => {
   beforeEach(() => {
-    (WebBrowser.openBrowserAsync as jest.Mock).mockClear();
+    (WebBrowser.openBrowserAsync as any).mockClear();
   });
 
   it('should call WebBrowser.openBrowserAsync with the URL', async () => {
@@ -25,7 +25,7 @@ describe('openInAppBrowser', () => {
   });
 
   it('should not throw when WebBrowser fails', async () => {
-    (WebBrowser.openBrowserAsync as jest.Mock).mockRejectedValue(
+    (WebBrowser.openBrowserAsync as any).mockRejectedValue(
       new Error('Browser unavailable')
     );
 
