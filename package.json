@@ -15,7 +15,13 @@
     "build:e2e:android": "detox build --configuration android.emu.release",
     "test:e2e:ios": "detox test --configuration ios.sim.release",
     "test:e2e:android": "detox test --configuration android.emu.release",
-    "test:e2e": "npm run test:e2e:ios && npm run test:e2e:android"
+    "test:e2e": "npm run test:e2e:ios && npm run test:e2e:android",
+    "seed": "node scripts/seed-books.mjs",
+    "seed:android": "node scripts/seed-books.mjs android",
+    "seed:ios": "node scripts/seed-books.mjs ios",
+    "seed:clear": "node scripts/seed-books.mjs --clear",
+    "seed:clear:android": "node scripts/seed-books.mjs --clear android",
+    "seed:clear:ios": "node scripts/seed-books.mjs --clear ios"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
