@@ -54,7 +54,8 @@ export function BookListItem({ book, onPress }: BookListItemProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e0e0e0',

@@ -94,6 +94,7 @@ export function HomeScreen() {
           data={books}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         />
       )}
 
