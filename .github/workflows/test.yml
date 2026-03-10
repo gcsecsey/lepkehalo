@@ -84,6 +84,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
@@ -91,7 +92,15 @@ jobs:
       - name: Install Detox CLI
         run: npm install -g detox-cli
 
+      - name: Cache Expo prebuild
+        id: prebuild-cache
+        uses: actions/cache@v4
+        with:
+          path: android
+          key: expo-prebuild-android-${{ hashFiles('app.json', 'package-lock.json') }}
+
       - name: Generate native projects
+        if: steps.prebuild-cache.outputs.cache-hit != 'true'
         run: npx expo prebuild --clean
 
       - name: Build for Detox

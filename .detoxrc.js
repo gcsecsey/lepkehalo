@@ -1,3 +1,5 @@
+const arch = process.arch === 'arm64' ? 'arm64-v8a' : 'x86_64';
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
@@ -28,14 +30,14 @@ module.exports = {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/debug/app-debug.apk',
       build:
-        'cd android && ./gradlew assembleDebug :app:assembleDebugAndroidTest -DtestBuildType=debug',
+        `cd android && ./gradlew assembleDebug :app:assembleDebugAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${arch}`,
       reversePorts: [8081],
     },
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
       build:
-        'cd android && ./gradlew assembleRelease :app:assembleDebugAndroidTest -DtestBuildType=debug',
+        `cd android && ./gradlew assembleRelease :app:assembleDebugAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${arch}`,
     },
   },
   devices: {
