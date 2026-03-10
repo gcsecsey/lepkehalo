@@ -5,6 +5,11 @@ import { useBookStore } from '@/stores/bookStore';
 import { Book } from '@/types/book';
 import { __mockNavigate } from '../../__mocks__/@react-navigation/native';
 
+jest.mock('react-native-safe-area-context', () => ({
+  ...jest.requireActual('react-native-safe-area-context'),
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
+
 // Mock GestureHandlerRootView
 jest.mock('react-native-gesture-handler', () => {
   const View = require('react-native').View;

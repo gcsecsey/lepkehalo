@@ -7,7 +7,7 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 
@@ -32,6 +32,7 @@ interface DeletedBook {
 
 export function HomeScreen() {
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   const { books, isLoading, loadBooks, removeBook, restoreBook } = useBookStore();
   const [deletedBook, setDeletedBook] = useState<DeletedBook | null>(null);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -98,7 +99,7 @@ export function HomeScreen() {
 
       <TouchableOpacity
         testID="scan-button"
-        style={styles.scanButton}
+        style={[styles.scanButton, { bottom: 24 + insets.bottom }]}
         onPress={handleScanPress}
         activeOpacity={0.8}
         accessible={true}
@@ -115,6 +116,7 @@ export function HomeScreen() {
         onAction={handleUndo}
         onDismiss={handleSnackbarDismiss}
         visible={snackbarVisible}
+        bottomOffset={insets.bottom}
       />
     </SafeAreaView>
   );
@@ -141,7 +143,6 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     position: 'absolute',
-    bottom: 24,
     alignSelf: 'center',
     backgroundColor: '#007AFF',
     paddingHorizontal: 24,
