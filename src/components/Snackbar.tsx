@@ -8,6 +8,7 @@ interface SnackbarProps {
   onDismiss: () => void;
   duration?: number;
   visible: boolean;
+  bottomOffset?: number;
 }
 
 export function Snackbar({
@@ -17,6 +18,7 @@ export function Snackbar({
   onDismiss,
   duration = 4000,
   visible,
+  bottomOffset = 0,
 }: SnackbarProps) {
   const translateY = React.useRef(new Animated.Value(100)).current;
 
@@ -62,7 +64,7 @@ export function Snackbar({
   return (
     <Animated.View
       testID="undo-snackbar"
-      style={[styles.container, { transform: [{ translateY }] }]}
+      style={[styles.container, { bottom: 80 + bottomOffset, transform: [{ translateY }] }]}
     >
       <Text style={styles.message}>{message}</Text>
       {onAction && (
@@ -77,7 +79,6 @@ export function Snackbar({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 80,
     alignSelf: 'center',
     backgroundColor: 'rgba(60, 60, 67, 0.9)',
     borderRadius: 22,
