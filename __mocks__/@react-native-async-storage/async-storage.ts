@@ -4,37 +4,37 @@
 let storage: Record<string, string> = {};
 
 const AsyncStorage = {
-  getItem: jest.fn(async (key: string) => {
+  getItem: vi.fn(async (key: string) => {
     return storage[key] ?? null;
   }),
 
-  setItem: jest.fn(async (key: string, value: string) => {
+  setItem: vi.fn(async (key: string, value: string) => {
     storage[key] = value;
   }),
 
-  removeItem: jest.fn(async (key: string) => {
+  removeItem: vi.fn(async (key: string) => {
     delete storage[key];
   }),
 
-  clear: jest.fn(async () => {
+  clear: vi.fn(async () => {
     storage = {};
   }),
 
-  getAllKeys: jest.fn(async () => {
+  getAllKeys: vi.fn(async () => {
     return Object.keys(storage);
   }),
 
-  multiGet: jest.fn(async (keys: string[]) => {
+  multiGet: vi.fn(async (keys: string[]) => {
     return keys.map((key) => [key, storage[key] ?? null]);
   }),
 
-  multiSet: jest.fn(async (keyValuePairs: [string, string][]) => {
+  multiSet: vi.fn(async (keyValuePairs: [string, string][]) => {
     keyValuePairs.forEach(([key, value]) => {
       storage[key] = value;
     });
   }),
 
-  multiRemove: jest.fn(async (keys: string[]) => {
+  multiRemove: vi.fn(async (keys: string[]) => {
     keys.forEach((key) => {
       delete storage[key];
     });

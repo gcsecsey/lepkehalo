@@ -4,25 +4,25 @@ import { ScannerScreen } from '@/screens/ScannerScreen';
 import { setMockPermissionStatus, useCameraPermissions } from '../../__mocks__/expo-camera';
 
 // Mock navigation
-jest.mock('@react-navigation/native', () => ({
+vi.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
-    goBack: jest.fn(),
+    goBack: vi.fn(),
   }),
 }));
 
 describe('ScannerScreen permission request', () => {
   beforeEach(() => {
-    (useCameraPermissions as jest.Mock).mockClear();
+    (useCameraPermissions as any).mockClear();
   });
 
   it('should call requestPermission when status is undetermined', async () => {
     setMockPermissionStatus('undetermined');
 
-    render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
       // Get the requestPermission function from the last call to useCameraPermissions
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
+      const lastCall = (useCameraPermissions as any).mock.results;
       const [, requestPermission] = lastCall[lastCall.length - 1].value;
       expect(requestPermission).toHaveBeenCalled();
     });
@@ -31,10 +31,10 @@ describe('ScannerScreen permission request', () => {
   it('should not request permission when already granted', async () => {
     setMockPermissionStatus('granted');
 
-    render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
+      const lastCall = (useCameraPermissions as any).mock.results;
       const [, requestPermission] = lastCall[lastCall.length - 1].value;
       expect(requestPermission).not.toHaveBeenCalled();
     });
@@ -43,10 +43,10 @@ describe('ScannerScreen permission request', () => {
   it('should not request permission when permanently denied', async () => {
     setMockPermissionStatus('denied');
 
-    render(<ScannerScreen onBarcodeScanned={jest.fn()} />);
+    render(<ScannerScreen onBarcodeScanned={vi.fn()} />);
 
     await waitFor(() => {
-      const lastCall = (useCameraPermissions as jest.Mock).mock.results;
+      const lastCall = (useCameraPermissions as any).mock.results;
       const [, requestPermission] = lastCall[lastCall.length - 1].value;
       expect(requestPermission).not.toHaveBeenCalled();
     });

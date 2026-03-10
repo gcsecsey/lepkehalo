@@ -8,7 +8,7 @@ describe('Book Store', () => {
     // Reset store state before each test
     useBookStore.setState({ books: [], isLoading: false });
     await AsyncStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('addBook', () => {

@@ -45,14 +45,14 @@ export const CameraView = React.forwardRef<View, CameraViewProps>(
 );
 
 // Camera permissions - simple mock that doesn't cause re-renders
-export const useCameraPermissions = jest.fn(() => {
+export const useCameraPermissions = vi.fn(() => {
   const permission = {
     granted: mockPermissionStatus === 'granted',
     canAskAgain: mockPermissionStatus !== 'denied',
     status: mockPermissionStatus,
   };
 
-  const requestPermission = jest.fn(async () => permission);
+  const requestPermission = vi.fn(async () => permission);
 
   return [permission, requestPermission] as const;
 });

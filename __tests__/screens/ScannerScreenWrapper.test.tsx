@@ -7,8 +7,8 @@ import { server } from '../../__mocks__/server';
 import { useBookStore } from '@/stores/bookStore';
 
 // Mock navigation
-const mockGoBack = jest.fn();
-jest.mock('@react-navigation/native', () => ({
+const mockGoBack = vi.fn();
+vi.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     goBack: mockGoBack,
   }),
@@ -23,7 +23,7 @@ const scanBarcode = async (isbn: string) => {
 
 describe('ScannerScreenWrapper', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     setMockPermissionStatus('granted');
     mockGoBack.mockClear();
     // Reset store state
@@ -31,7 +31,7 @@ describe('ScannerScreenWrapper', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should render scanner screen initially', () => {
@@ -92,7 +92,7 @@ describe('ScannerScreenWrapper', () => {
 
     // Advance past the 2-second timeout
     act(() => {
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
     });
 
     await waitFor(() => {
@@ -174,7 +174,7 @@ describe('ScannerScreenWrapper', () => {
 
     // Wait for error timeout to reset
     act(() => {
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
     });
 
     await waitFor(() => {

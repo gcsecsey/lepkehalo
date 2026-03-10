@@ -5,7 +5,7 @@ import { saveBooks, loadBooks, STORAGE_KEY } from '@/services/storage';
 describe('Storage Service', () => {
   beforeEach(async () => {
     await AsyncStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('saveBooks', () => {

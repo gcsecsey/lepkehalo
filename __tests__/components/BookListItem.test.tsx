@@ -14,7 +14,7 @@ describe('BookListItem', () => {
 
   it('should render book title', () => {
     const { getByText } = render(
-      <BookListItem book={mockBook} onPress={jest.fn()} />
+      <BookListItem book={mockBook} onPress={vi.fn()} />
     );
 
     expect(getByText('A kék sziget')).toBeTruthy();
@@ -22,7 +22,7 @@ describe('BookListItem', () => {
 
   it('should render book author', () => {
     const { getByText } = render(
-      <BookListItem book={mockBook} onPress={jest.fn()} />
+      <BookListItem book={mockBook} onPress={vi.fn()} />
     );
 
     expect(getByText('Rejtő Jenő')).toBeTruthy();
@@ -30,7 +30,7 @@ describe('BookListItem', () => {
 
   it('should render book cover image', () => {
     const { getByTestId } = render(
-      <BookListItem book={mockBook} onPress={jest.fn()} />
+      <BookListItem book={mockBook} onPress={vi.fn()} />
     );
 
     const image = getByTestId('book-cover');
@@ -38,7 +38,7 @@ describe('BookListItem', () => {
   });
 
   it('should call onPress when tapped', () => {
-    const onPress = jest.fn();
+    const onPress = vi.fn();
     const { getByTestId } = render(
       <BookListItem book={mockBook} onPress={onPress} />
     );
@@ -51,7 +51,7 @@ describe('BookListItem', () => {
   it('should show placeholder when no cover image', () => {
     const bookWithoutCover = { ...mockBook, thumbnailUrl: '' };
     const { getByTestId } = render(
-      <BookListItem book={bookWithoutCover} onPress={jest.fn()} />
+      <BookListItem book={bookWithoutCover} onPress={vi.fn()} />
     );
 
     expect(getByTestId('book-cover-placeholder')).toBeTruthy();
@@ -63,7 +63,7 @@ describe('BookListItem', () => {
       title: 'This is an extremely long book title that should be truncated when displayed',
     };
     const { getByText } = render(
-      <BookListItem book={bookWithLongTitle} onPress={jest.fn()} />
+      <BookListItem book={bookWithLongTitle} onPress={vi.fn()} />
     );
 
     expect(getByText(bookWithLongTitle.title)).toBeTruthy();
