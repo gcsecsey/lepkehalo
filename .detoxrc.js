@@ -8,7 +8,7 @@ module.exports = {
       config: 'e2e/jest.config.js',
     },
     jest: {
-      setupTimeout: 120000,
+      setupTimeout: 300000,
     },
   },
   apps: {
@@ -36,8 +36,10 @@ module.exports = {
     'android.release': {
       type: 'android.apk',
       binaryPath: 'android/app/build/outputs/apk/release/app-release.apk',
+      testBinaryPath:
+        'android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
       build:
-        `cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release -PreactNativeArchitectures=${arch}`,
+        `cd android && ./gradlew assembleRelease :app:assembleDebugAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${arch}`,
     },
   },
   devices: {
