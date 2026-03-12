@@ -112,7 +112,7 @@ jobs:
           restore-keys: gradle-
 
       - name: Build for Detox
-        run: npm run build:e2e:android
+        run: cd android && ./gradlew assembleDebug :app:assembleDebugAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=x86_64 -PbundleInDebug
 
       - name: Enable KVM
         run: |
@@ -127,7 +127,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: test_emulator_api_30
-          script: npm run test:e2e:android
+          script: detox test --configuration android.emu.debug
 
       - name: Upload artifacts on failure
         uses: actions/upload-artifact@v4

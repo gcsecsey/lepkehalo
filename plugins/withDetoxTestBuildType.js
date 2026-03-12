@@ -1,23 +1,32 @@
 const { withAppBuildGradle } = require('expo/config-plugins');
 
 /**
- * Expo config plugin that adds testBuildType support for Detox.
+ * Expo config plugin for Detox Android E2E testing.
  *
- * Without this, Android always builds debug test APKs regardless of
- * the -DtestBuildType flag. This plugin injects the necessary config
- * so `./gradlew assembleAndroidTest -DtestBuildType=release` builds
- * a release test APK that can instrument a release app.
+ * Adds two capabilities to the generated build.gradle:
+ * 1. testBuildType support: allows -DtestBuildType=release to build release test APKs
+ * 2. bundleInDebug support: allows -PbundleInDebug to embed the JS bundle in debug
+ *    builds, so E2E tests work in CI without a Metro dev server
  */
 module.exports = function withDetoxTestBuildType(config) {
   return withAppBuildGradle(config, (config) => {
-    const contents = config.modResults.contents;
-    if (contents.includes('testBuildType')) {
-      return config;
+    let contents = config.modResults.contents;
+
+    if (!contents.includes('testBuildType')) {
+      contents = contents.replace(
+        /defaultConfig\s*\{/,
+        `defaultConfig {\n        testBuildType System.getProperty('testBuildType', 'debug')`,
+      );
     }
-    config.modResults.contents = contents.replace(
-      /defaultConfig\s*\{/,
-      `defaultConfig {\n        testBuildType System.getProperty('testBuildType', 'debug')`,
-    );
+
+    if (!contents.includes('bundleInDebug')) {
+      contents = contents.replace(
+        /react \{/,
+        `react {\n    bundleInDebug = project.hasProperty('bundleInDebug')`,
+      );
+    }
+
+    config.modResults.contents = contents;
     return config;
   });
 };
