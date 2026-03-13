@@ -53,6 +53,14 @@ function withDetoxAppBuildGradle(config) {
       );
     }
 
+    // Detox has product flavors (coreNative, full). Tell Gradle to use 'full'.
+    if (!contents.includes("missingDimensionStrategy 'detox'")) {
+      contents = contents.replace(
+        /defaultConfig\s*\{/,
+        `defaultConfig {\n        missingDimensionStrategy 'detox', 'full'`,
+      );
+    }
+
     // RNGP skips JS bundling for variants in debuggableVariants (default: ['debug']).
     // When -PbundleInDebug is passed, clear the list so debug builds get a JS bundle.
     // Check for actual code assignment, not just comments mentioning debuggableVariants.
