@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 
+import { useTranslation } from 'react-i18next';
 import { ScannerScreen } from './ScannerScreen';
 import { searchBookByISBN } from '@/services/molyApi';
 import { useBookStore } from '@/stores/bookStore';
@@ -10,6 +11,7 @@ import { useBookStore } from '@/stores/bookStore';
 type ScanState = 'scanning' | 'loading' | 'error';
 
 export function ScannerScreenWrapper() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { addBook, hasBook, moveToTop } = useBookStore();
   const [scanState, setScanState] = useState<ScanState>('scanning');
@@ -47,7 +49,7 @@ export function ScannerScreenWrapper() {
         } else {
           // Book not found on Moly.hu
           setScanState('error');
-          setErrorMessage('Az ISBN nem található a Moly-on');
+          setErrorMessage(t('scanner.notFound'));
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
           // Return to scanning after delay
@@ -60,7 +62,7 @@ export function ScannerScreenWrapper() {
       } catch (error) {
         console.error('Error searching book:', error);
         setScanState('error');
-        setErrorMessage('A moly.hu nem elérhető');
+        setErrorMessage(t('scanner.unavailable'));
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
         // Return to scanning after delay
@@ -79,7 +81,7 @@ export function ScannerScreenWrapper() {
       <View style={styles.overlayContainer}>
         <View style={styles.loadingBox}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Könyv keresése...</Text>
+          <Text style={styles.loadingText}>{t('scanner.searching')}</Text>
         </View>
       </View>
     );

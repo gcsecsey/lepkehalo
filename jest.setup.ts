@@ -15,7 +15,13 @@ afterEach(() => server.resetHandlers());
 // Clean up after all tests
 afterAll(() => server.close());
 
+// Initialize i18n for tests
+import './src/i18n';
+
 // Mock native modules
+jest.mock('expo-localization', () => ({
+  getLocales: () => [{ languageCode: 'hu', languageTag: 'hu-HU' }],
+}));
 jest.mock('react-native-vision-camera');
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('react-native-inappbrowser-reborn');
