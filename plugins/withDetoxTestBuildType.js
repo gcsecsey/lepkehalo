@@ -19,11 +19,12 @@ module.exports = function withDetoxTestBuildType(config) {
       );
     }
 
-    // RNGP uses a bundleIn map property, not a direct bundleInDebug field
-    if (!contents.includes('bundleIn')) {
+    // RNGP skips JS bundling for variants in debuggableVariants (default: ['debug']).
+    // When -PbundleInDebug is passed, clear the list so debug builds get a JS bundle.
+    if (!contents.includes('debuggableVariants')) {
       contents = contents.replace(
         /react \{/,
-        `react {\n    if (project.hasProperty('bundleInDebug')) {\n        bundleIn = ["debug": true]\n    }`,
+        `react {\n    if (project.hasProperty('bundleInDebug')) {\n        debuggableVariants = []\n    }`,
       );
     }
 
