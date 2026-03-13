@@ -19,10 +19,11 @@ module.exports = function withDetoxTestBuildType(config) {
       );
     }
 
-    if (!contents.includes('bundleInDebug')) {
+    // RNGP uses a bundleIn map property, not a direct bundleInDebug field
+    if (!contents.includes('bundleIn')) {
       contents = contents.replace(
         /react \{/,
-        `react {\n    bundleInDebug = project.hasProperty('bundleInDebug')`,
+        `react {\n    if (project.hasProperty('bundleInDebug')) {\n        bundleIn = ["debug": true]\n    }`,
       );
     }
 

@@ -96,7 +96,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: android
-          key: expo-prebuild-android-${{ hashFiles('app.json', 'package-lock.json') }}
+          key: expo-prebuild-android-${{ hashFiles('app.json', 'package-lock.json', 'plugins/**/*.js') }}
 
       - name: Generate native projects
         if: steps.prebuild-cache.outputs.cache-hit != 'true'
