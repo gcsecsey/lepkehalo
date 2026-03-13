@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface SnackbarProps {
   message: string;
@@ -13,7 +14,7 @@ interface SnackbarProps {
 
 export function Snackbar({
   message,
-  actionLabel = 'Visszavonás',
+  actionLabel,
   onAction,
   onDismiss,
   duration = 4000,

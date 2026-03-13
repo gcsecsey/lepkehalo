@@ -11,6 +11,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 
+import { useTranslation } from 'react-i18next';
 import { useBookStore } from '@/stores/bookStore';
 import { Book } from '@/types/book';
 import { BookListItem } from '@/components/BookListItem';
@@ -31,6 +32,7 @@ interface DeletedBook {
 }
 
 export function HomeScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
   const { books, isLoading, loadBooks, removeBook, restoreBook } = useBookStore();
@@ -86,7 +88,7 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView testID="home-screen" style={styles.container} edges={['top']}>
-      <Text style={styles.heading}>Beolvasott könyvek</Text>
+      <Text style={styles.heading}>{t('home.heading')}</Text>
       {books.length === 0 ? (
         <EmptyState />
       ) : (
@@ -105,15 +107,15 @@ export function HomeScreen() {
         activeOpacity={0.8}
         accessible={true}
         accessibilityRole="button"
-        accessibilityLabel="Beolvasás"
-        accessibilityHint="Vonalkód beolvasása új könyv hozzáadásához"
+        accessibilityLabel={t('home.scanButtonLabel')}
+        accessibilityHint={t('home.scanButtonHint')}
       >
-        <Text style={styles.scanButtonText}>📷 Beolvasás</Text>
+        <Text style={styles.scanButtonText}>{t('home.scanButton')}</Text>
       </TouchableOpacity>
 
       <Snackbar
-        message="Könyv törölve"
-        actionLabel="Visszavonás"
+        message={t('home.bookDeleted')}
+        actionLabel={t('common.undo')}
         onAction={handleUndo}
         onDismiss={handleSnackbarDismiss}
         visible={snackbarVisible}

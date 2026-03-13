@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '@/screens/HomeScreen';
 import { ScannerScreenWrapper } from '@/screens/ScannerScreenWrapper';
@@ -7,6 +8,8 @@ import { RootStackParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
+  const { t } = useTranslation();
+
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -18,7 +21,7 @@ export function RootNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Lepkeháló',
+          title: t('nav.homeTitle'),
         }}
       />
       <Stack.Screen

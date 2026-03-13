@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
 
+import '@/i18n';
 import { RootNavigator } from './navigation/RootNavigator';
 import { useBookStore } from '@/stores/bookStore';
 

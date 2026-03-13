@@ -9,6 +9,7 @@ import {
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 interface ScannerScreenProps {
   onBarcodeScanned: (isbn: string) => void;
@@ -18,6 +19,7 @@ const { width, height } = Dimensions.get('window');
 const SCAN_AREA_SIZE = width * 0.7;
 
 export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [permission, requestPermission] = useCameraPermissions();
   const [flashEnabled, setFlashEnabled] = useState(false);
@@ -60,7 +62,7 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
   if (!permission) {
     return (
       <View testID="scanner-screen" style={styles.container}>
-        <Text style={styles.message}>Kamera inicializálása...</Text>
+        <Text style={styles.message}>{t('scanner.initializing')}</Text>
       </View>
     );
   }
@@ -69,16 +71,16 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
   if (!permission.granted) {
     return (
       <View testID="scanner-screen" style={styles.container}>
-        <Text style={styles.message}>Kamera engedély szükséges</Text>
+        <Text style={styles.message}>{t('scanner.permissionRequired')}</Text>
         <Text style={styles.subMessage}>
-          Kérjük, engedélyezze a kamera használatát a beállításokban
+          {t('scanner.permissionInstruction')}
         </Text>
         <TouchableOpacity
           testID="close-button"
           style={styles.closeButton}
           onPress={handleClose}
         >
-          <Text style={styles.closeButtonText}>Vissza</Text>
+          <Text style={styles.closeButtonText}>{t('scanner.back')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -118,7 +120,7 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
         {/* Bottom dark area with instructions */}
         <View style={[styles.darkArea, styles.bottomArea]}>
           <Text style={styles.instruction}>
-            Helyezze a vonalkódot a keretbe
+            {t('scanner.instruction')}
           </Text>
         </View>
       </View>
@@ -131,8 +133,8 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
           onPress={handleClose}
           accessible={true}
           accessibilityRole="button"
-          accessibilityLabel="Bezárás"
-          accessibilityHint="Visszatérés a könyvlistához"
+          accessibilityLabel={t('scanner.close')}
+          accessibilityHint={t('scanner.closeHint')}
         >
           <Text style={styles.controlIcon}>✕</Text>
         </TouchableOpacity>
@@ -143,7 +145,7 @@ export function ScannerScreen({ onBarcodeScanned }: ScannerScreenProps) {
           onPress={toggleFlash}
           accessible={true}
           accessibilityRole="button"
-          accessibilityLabel={flashEnabled ? 'Vaku kikapcsolása' : 'Vaku bekapcsolása'}
+          accessibilityLabel={flashEnabled ? t('scanner.flashOn') : t('scanner.flashOff')}
           accessibilityState={{ checked: flashEnabled }}
         >
           {flashEnabled ? (

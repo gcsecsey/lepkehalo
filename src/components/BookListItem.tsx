@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Book } from '@/types/book';
 
 interface BookListItemProps {
@@ -14,6 +15,7 @@ interface BookListItemProps {
 }
 
 export function BookListItem({ book, onPress }: BookListItemProps) {
+  const { t } = useTranslation();
   const hasCover = book.thumbnailUrl && book.thumbnailUrl.length > 0;
 
   return (
@@ -25,7 +27,7 @@ export function BookListItem({ book, onPress }: BookListItemProps) {
       accessible={true}
       accessibilityRole="button"
       accessibilityLabel={`${book.title}, ${book.author}`}
-      accessibilityHint="Koppints a könyv megnyitásához a Moly.hu-n"
+      accessibilityHint={t('book.openHint')}
     >
       {hasCover ? (
         <Image

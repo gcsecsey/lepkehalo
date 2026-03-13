@@ -1,23 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyStateProps {
   message?: string;
 }
 
-export function EmptyState({ message = 'Nincsenek beolvasott könyvek' }: EmptyStateProps) {
+export function EmptyState({ message }: EmptyStateProps) {
+  const { t } = useTranslation();
+  const displayMessage = message ?? t('empty.message');
+
   return (
     <View
       testID="empty-state"
       style={styles.container}
       accessible={true}
       accessibilityRole="text"
-      accessibilityLabel={`${message}. Nyomj a beolvasás gombra egy könyv hozzáadásához`}
+      accessibilityLabel={`${displayMessage}. ${t('empty.hint')}`}
     >
       <Text style={styles.emoji} accessibilityElementsHidden={true}>📖</Text>
-      <Text style={styles.message}>{message}</Text>
+      <Text style={styles.message}>{displayMessage}</Text>
       <Text style={styles.hint}>
-        Nyomj a beolvasás gombra egy könyv hozzáadásához
+        {t('empty.hint')}
       </Text>
     </View>
   );
