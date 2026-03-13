@@ -39,6 +39,7 @@
       ]
     },
     "plugins": [
+      "./plugins/withDetoxTestBuildType",
       [
         "expo-camera",
         {
