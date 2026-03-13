@@ -21,7 +21,8 @@ module.exports = function withDetoxTestBuildType(config) {
 
     // RNGP skips JS bundling for variants in debuggableVariants (default: ['debug']).
     // When -PbundleInDebug is passed, clear the list so debug builds get a JS bundle.
-    if (!contents.includes('debuggableVariants')) {
+    // Check for actual code assignment, not just comments mentioning debuggableVariants.
+    if (!contents.match(/^\s*debuggableVariants\s*=/m)) {
       contents = contents.replace(
         /react \{/,
         `react {\n    if (project.hasProperty('bundleInDebug')) {\n        debuggableVariants = []\n    }`,
